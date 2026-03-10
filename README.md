@@ -1,73 +1,60 @@
-# React + TypeScript + Vite
+# About Me / Portfolio Card 🖤
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A highly aesthetic, minimalist, and dynamic "About Me" profile page built with React and Tailwind CSS. Designed to feel premium, featuring glassmorphism elements, custom typography, smooth framer-motion animations, a customized audio player, and a live Discord presence badge.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## ✨ Features
 
-## React Compiler
+- **Dark & Minimalist UI**: An elegant, monochromatic color scheme focused on deep blacks and subtle purples (`#5a5360`).
+- **Live Discord Status**: A live, dynamic badge that syncs with your actual Discord presence (Online/Offline) with custom aesthetic dialogue and a glowing character sprite.
+- **Ambient Layout**: Includes subtle ambient background glowing orbs, elegant fonts (`Outfit`, `DM Serif Display`), and smooth hover micro-interactions.
+- **Custom Music Player**: A custom-styled audio player built natively tracking the duration of any `music.mp3`, featuring a minimalistic progress bar, playback controls, and muted states.
+- **Refined Typography**: Sleek centered Quote component paired with beautifully spaced text.
+- **Fully Responsive**: Carefully scales and adapts to any screen size—from ultrawide desktop monitors to standard mobile phones.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 🛠️ Tech Stack
 
-## Expanding the ESLint configuration
+- **React 18** + **Vite** (Environment)
+- **TypeScript** (Strict Type Safety)
+- **Tailwind CSS v4** (Utility-first styling & responsiveness)
+- **Framer Motion** (Smooth mount and interaction animations)
+- **Lucide React** (Clean SVG icons)
+- **CountAPI** (Live Visitor tracking)
+- **Lanyard API / custom hooks** (Discord Status fetching)
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+---
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## 🚀 Quick Start
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+Ensure you have [Node.js](https://nodejs.org/) installed, then follow these steps:
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+1. **Install Dependencies**
+   ```bash
+   npm install
+   ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+2. **Personalization**
+   - Replace the `src/assets/pfp.png` with your profile picture.
+   - Replace `public/music.mp3` with your preferred aesthetic background audio.
+   - Replace the `1241601451440996413` Discord ID in `StatusBadge.tsx` with your own (must be in a mutual server with the Lanyard bot).
+   - Change your social media links across `SocialLinks.tsx`.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+3. **Start the Development Server**
+   ```bash
+   npm run dev
+   ```
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+4. **Build for Production**
+   ```bash
+   npm run build
+   ```
+
+## 🎨 Aesthetics & Design Notes
+
+This project prioritizes high-fidelity visual design. Avoid altering the standard padding scales or default Tailwind borders—the glassmorphism overlays rely primarily on deep background blurs (`backdrop-blur`) mixed with carefully tuned opacities (usually ~30%-40%) overlaying onto `#070707` backgrounds. 
+
+When replacing icons, use monochromatic `.svg` icons and rely on the `filter: drop-shadow(...)` utilities configured in `index.css` for the glow effects.
+
+---
+*Created carefully to impress.*

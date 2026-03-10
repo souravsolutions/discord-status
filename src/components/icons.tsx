@@ -24,21 +24,15 @@ export const SpotifyIcon = () => (
   </svg>
 );
 
-export const RobloxBrandIcon = () => (
+export const XIcon = () => (
   <svg
-    role="img"
     viewBox="0 0 24 24"
-    xmlns="http://www.w3.org/2000/svg"
-    id="Roblox--Streamline-Simple-Icons"
-    height="256"
-    width="256"
+    aria-hidden="true"
+    className="w-8 h-8"
   >
-    <desc>Roblox Streamline Icon: https://streamlinehq.com</desc>
-    <title>Roblox</title>
     <path
-      d="M18.926 23.998 0 18.892 5.075 0.002 24 5.108ZM15.348 10.09l-5.282 -1.453 -1.414 5.273 5.282 1.453z"
+      d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 22.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"
       fill="#eeeef3"
-      stroke-width="1"
-    ></path>
+    />
   </svg>
 );

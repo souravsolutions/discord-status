@@ -1,4 +1,4 @@
-import { DiscordIcon, SpotifyIcon, RobloxBrandIcon } from "./icons.tsx";
+import { DiscordIcon, SpotifyIcon, XIcon } from "./icons.tsx";
 
 interface SocialLink {
   id: string;
@@ -11,10 +11,10 @@ interface SocialLink {
 
 const socials: SocialLink[] = [
   {
-    id: "roblox",
-    icon: <RobloxBrandIcon />,
-    href: "https://www.roblox.com/",
-    label: "Roblox",
+    id: "x",
+    icon: <XIcon />,
+    href: "https://x.com/",
+    label: "X",
     glowColor: "rgba(255,255,255,0.9)",
     shadowColor: "rgba(255,255,255,0.6)",
   },
@@ -38,7 +38,7 @@ const socials: SocialLink[] = [
 
 export default function SocialLinks() {
   return (
-    <div className="flex items-center gap-7 mb-8">
+    <div className="flex items-center gap-5 mb-8">
       {socials.map((s) => (
         <a
           key={s.id}

@@ -120,19 +120,19 @@ const MusicPlayer = ({ src, isMuted, volume }: MusicPlayerProps) => {
   const progress = duration > 0 ? (currentTime / duration) * 100 : 0;
 
   return (
-    <div className="flex items-center gap-5 w-full opacity-40 transition-opacity duration-500">
+    <div className="flex flex-col md:flex-row items-center gap-4 md:gap-5 w-full opacity-40 transition-opacity duration-500">
       <audio ref={audioRef} src={src} preload="auto" />
 
-      {/* Album art - Enlarged */}
+      {/* Album art - Adapts size on mobile */}
       <div
-        className="flex-shrink-0 w-20 h-20 rounded-xl flex items-center justify-center shadow-lg"
+        className="flex-shrink-0 w-16 h-16 md:w-20 md:h-20 rounded-xl flex items-center justify-center shadow-lg"
         style={{ background: "#070608" }}
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
           viewBox="0 0 14 14"
-          className="w-9 h-9"
+          className="w-7 h-7 md:w-9 md:h-9"
         >
           <g id="music-note-circle--music-audio-note-circle-entertainment">
             <path
@@ -147,56 +147,59 @@ const MusicPlayer = ({ src, isMuted, volume }: MusicPlayerProps) => {
         </svg>
       </div>
 
-      {/* Time elapsed - enlarged to text-base */}
-      <span
-        className="text-base font-medium tabular-nums flex-shrink-0"
-        style={{ color: "#9a8fa5" }}
-      >
-        {formatTime(currentTime)}
-      </span>
-
-      {/* Progress bar */}
-      <div className="relative flex-1 h-[3px] group">
-        <div
-          className="h-full rounded-full overflow-hidden"
-          style={{ background: "#252029" }}
+      {/* Playback bar container */}
+      <div className="flex items-center gap-3 md:gap-4 w-full flex-1">
+        {/* Time elapsed */}
+        <span
+          className="text-sm md:text-base font-medium tabular-nums flex-shrink-0 opacity-30"
+          style={{ color: "#9a8fa5" }}
         >
+          {formatTime(currentTime)}
+        </span>
+
+        {/* Progress bar */}
+        <div className="relative flex-1 h-[3px] group">
           <div
-            className="h-full rounded-full"
-            style={{ width: `${progress}%`, background: "#5a5360" }}
+            className="h-full rounded-full overflow-hidden"
+            style={{ background: "#252029" }}
+          >
+            <div
+              className="h-full rounded-full"
+              style={{ width: `${progress}%`, background: "#5a5360" }}
+            />
+          </div>
+          <input
+            type="range"
+            min={0}
+            max={duration || 100}
+            step={0.1}
+            value={currentTime}
+            onChange={seek}
+            onMouseDown={() => setIsDragging(true)}
+            onMouseUp={() => setIsDragging(false)}
+            onTouchStart={() => setIsDragging(true)}
+            onTouchEnd={() => setIsDragging(false)}
+            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
           />
         </div>
-        <input
-          type="range"
-          min={0}
-          max={duration || 100}
-          step={0.1}
-          value={currentTime}
-          onChange={seek}
-          onMouseDown={() => setIsDragging(true)}
-          onMouseUp={() => setIsDragging(false)}
-          onTouchStart={() => setIsDragging(true)}
-          onTouchEnd={() => setIsDragging(false)}
-          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-        />
+
+        {/* Duration */}
+        <span
+          className="text-sm md:text-base font-medium tabular-nums flex-shrink-0 opacity-30"
+          style={{ color: "#5a5360" }}
+        >
+          {formatTime(duration)}
+        </span>
       </div>
 
-      {/* Duration - enlarged to text-base */}
-      <span
-        className="text-base font-medium tabular-nums flex-shrink-0"
-        style={{ color: "#5a5360" }}
-      >
-        {formatTime(duration)}
-      </span>
-
-      {/* Controls - enlarged icons and gap */}
-      <div className="flex items-center gap-5 flex-shrink-0">
+      {/* Controls */}
+      <div className="flex items-center justify-center gap-4 md:gap-5 flex-shrink-0 mt-2 md:mt-0">
         <button
           onClick={rewind}
           className="transition-transform duration-200 hover:scale-110 active:scale-95"
           style={{ color: "#5a5360" }}
         >
-          <SkipBack size={22} />
+          <SkipBack size={20} className="md:w-[22px] md:h-[22px]" />
         </button>
         <button
           onClick={togglePlay}
@@ -204,9 +207,9 @@ const MusicPlayer = ({ src, isMuted, volume }: MusicPlayerProps) => {
           style={{ color: "#9a8fa5" }}
         >
           {isPlaying ? (
-            <Pause size={25} fill="currentColor" />
+            <Pause size={23} fill="currentColor" className="md:w-[25px] md:h-[25px]" />
           ) : (
-            <Play size={25} fill="currentColor" />
+            <Play size={23} fill="currentColor" className="md:w-[25px] md:h-[25px]" />
           )}
         </button>
         <button
@@ -214,7 +217,7 @@ const MusicPlayer = ({ src, isMuted, volume }: MusicPlayerProps) => {
           className="transition-transform duration-200 hover:scale-110 active:scale-95"
           style={{ color: "#5a5360" }}
         >
-          <SkipForward size={22} />
+          <SkipForward size={20} className="md:w-[22px] md:h-[22px]" />
         </button>
       </div>
     </div>
