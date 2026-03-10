@@ -4,7 +4,7 @@ import Quote from "./components/Quote";
 import MusicPlayer from "./components/MusicPlayer";
 import SocialLinks from "./components/SocialLinks";
 import StatusBadge from "./components/StatusBadge";
-import pfp from "./assets/pfp.png";
+import pfp from "./assets/pfp.webp";
 
 const SONG_SRC = "/music.mp3";
 
