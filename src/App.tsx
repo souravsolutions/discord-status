@@ -6,7 +6,8 @@ import SocialLinks from "./components/SocialLinks";
 import StatusBadge from "./components/StatusBadge";
 import pfp from "./assets/pfp.webp";
 
-const SONG_SRC = "/music.mp3";
+
+
 
 function App() {
   const [isMuted, setIsMuted] = useState(false);
@@ -103,7 +104,7 @@ function App() {
         </div>
 
         <div className='w-full'>
-          <MusicPlayer src={SONG_SRC} isMuted={isMuted} volume={volume} />
+          <MusicPlayer isMuted={isMuted} volume={volume} />
         </div>
       </div>
     </div>

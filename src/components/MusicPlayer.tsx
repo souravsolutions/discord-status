@@ -2,10 +2,14 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import { SkipBack, SkipForward, Play, Pause } from "lucide-react";
 
 interface MusicPlayerProps {
-  src: string;
   isMuted: boolean;
   volume: number;
 }
+
+const SONGS = [
+  { src: "/music.mp3", title: "Song 1" },
+  { src: "/XXXTENTACION.mp3", title: "XXXTENTACION" },
+];
 
 const formatTime = (s: number) => {
   if (!isFinite(s) || isNaN(s) || s < 0) return "0:00";
@@ -14,13 +18,18 @@ const formatTime = (s: number) => {
   return `${m}:${sec.toString().padStart(2, "0")}`;
 };
 
-const MusicPlayer = ({ src, isMuted, volume }: MusicPlayerProps) => {
+const MusicPlayer = ({ isMuted, volume }: MusicPlayerProps) => {
   const audioRef = useRef<HTMLAudioElement>(null);
+  const [trackIndex, setTrackIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
+  const [hasInteracted, setHasInteracted] = useState(false);
 
+  const currentSong = SONGS[trackIndex];
+
+  // Sync mute/volume
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
@@ -28,20 +37,14 @@ const MusicPlayer = ({ src, isMuted, volume }: MusicPlayerProps) => {
     audio.muted = isMuted;
   }, [isMuted, volume]);
 
-  const [hasInteracted, setHasInteracted] = useState(false);
-
-  // Global interaction listener to play and unmute
+  // Auto-play on first interaction
   useEffect(() => {
     if (hasInteracted) return;
-
     const handleInteraction = () => {
       const audio = audioRef.current;
       if (audio) {
-        // Enforce low initial volume
-        audio.volume = 0.3; 
+        audio.volume = volume;
         audio.muted = false;
-
-        // Play the audio if not already playing
         if (audio.paused) {
           audio.play().catch(console.error);
           setIsPlaying(true);
@@ -49,31 +52,29 @@ const MusicPlayer = ({ src, isMuted, volume }: MusicPlayerProps) => {
       }
       setHasInteracted(true);
     };
-
-    // Use capture phase to ensure we catch the very first event before anything else stops propagation
-    const options = { once: true, capture: true };
-    
-    window.addEventListener("click", handleInteraction, options);
-    window.addEventListener("touchstart", handleInteraction, options);
-    window.addEventListener("keydown", handleInteraction, options);
-    window.addEventListener("mousedown", handleInteraction, options);
-
+    const opts = { once: true, capture: true } as const;
+    window.addEventListener("click", handleInteraction, opts);
+    window.addEventListener("touchstart", handleInteraction, opts);
+    window.addEventListener("keydown", handleInteraction, opts);
+    window.addEventListener("mousedown", handleInteraction, opts);
     return () => {
-      window.removeEventListener("click", handleInteraction, options);
-      window.removeEventListener("touchstart", handleInteraction, options);
-      window.removeEventListener("keydown", handleInteraction, options);
-      window.removeEventListener("mousedown", handleInteraction, options);
+      window.removeEventListener("click", handleInteraction, opts);
+      window.removeEventListener("touchstart", handleInteraction, opts);
+      window.removeEventListener("keydown", handleInteraction, opts);
+      window.removeEventListener("mousedown", handleInteraction, opts);
     };
-  }, [hasInteracted]);
+  }, [hasInteracted, volume]);
 
+  // Audio event listeners
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
-    const onTimeUpdate = () => {
-      if (!isDragging) setCurrentTime(audio.currentTime);
-    };
+    const onTimeUpdate = () => { if (!isDragging) setCurrentTime(audio.currentTime); };
     const onLoadedMetadata = () => setDuration(audio.duration);
-    const onEnded = () => setIsPlaying(false);
+    const onEnded = () => {
+      // Auto-advance to next track on end
+      setTrackIndex((i) => (i + 1) % SONGS.length);
+    };
     audio.addEventListener("timeupdate", onTimeUpdate);
     audio.addEventListener("loadedmetadata", onLoadedMetadata);
     audio.addEventListener("ended", onEnded);
@@ -83,6 +84,21 @@ const MusicPlayer = ({ src, isMuted, volume }: MusicPlayerProps) => {
       audio.removeEventListener("ended", onEnded);
     };
   }, [isDragging]);
+
+  // When track changes, load and (if was playing) auto-play new track
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    const wasPlaying = isPlaying;
+    audio.pause();
+    audio.load();
+    setCurrentTime(0);
+    setDuration(0);
+    if (wasPlaying) {
+      audio.play().catch(console.error);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [trackIndex]);
 
   const togglePlay = useCallback(async () => {
     const audio = audioRef.current;
@@ -108,22 +124,23 @@ const MusicPlayer = ({ src, isMuted, volume }: MusicPlayerProps) => {
     setCurrentTime(val);
   };
 
-  const rewind = () => {
-    const a = audioRef.current;
-    if (a) a.currentTime = Math.max(0, a.currentTime - 5);
+  const prevTrack = () => {
+    setTrackIndex((i) => (i - 1 + SONGS.length) % SONGS.length);
+    setIsPlaying(true);
   };
-  const forward = () => {
-    const a = audioRef.current;
-    if (a) a.currentTime = Math.min(duration, a.currentTime + 5);
+
+  const nextTrack = () => {
+    setTrackIndex((i) => (i + 1) % SONGS.length);
+    setIsPlaying(true);
   };
 
   const progress = duration > 0 ? (currentTime / duration) * 100 : 0;
 
   return (
     <div className="flex flex-col md:flex-row items-center gap-4 md:gap-5 w-full opacity-40 transition-opacity duration-500">
-      <audio ref={audioRef} src={src} preload="auto" />
+      <audio ref={audioRef} src={currentSong.src} preload="auto" />
 
-      {/* Album art - Adapts size on mobile */}
+      {/* Album art */}
       <div
         className="flex-shrink-0 w-16 h-16 md:w-20 md:h-20 rounded-xl flex items-center justify-center shadow-lg"
         style={{ background: "#070608" }}
@@ -147,9 +164,8 @@ const MusicPlayer = ({ src, isMuted, volume }: MusicPlayerProps) => {
         </svg>
       </div>
 
-      {/* Playback bar container */}
+      {/* Playback bar */}
       <div className="flex items-center gap-3 md:gap-4 w-full flex-1">
-        {/* Time elapsed */}
         <span
           className="text-sm md:text-base font-medium tabular-nums flex-shrink-0 opacity-30"
           style={{ color: "#9a8fa5" }}
@@ -157,16 +173,9 @@ const MusicPlayer = ({ src, isMuted, volume }: MusicPlayerProps) => {
           {formatTime(currentTime)}
         </span>
 
-        {/* Progress bar */}
         <div className="relative flex-1 h-[3px] group">
-          <div
-            className="h-full rounded-full overflow-hidden"
-            style={{ background: "#252029" }}
-          >
-            <div
-              className="h-full rounded-full"
-              style={{ width: `${progress}%`, background: "#5a5360" }}
-            />
+          <div className="h-full rounded-full overflow-hidden" style={{ background: "#252029" }}>
+            <div className="h-full rounded-full" style={{ width: `${progress}%`, background: "#5a5360" }} />
           </div>
           <input
             type="range"
@@ -183,7 +192,6 @@ const MusicPlayer = ({ src, isMuted, volume }: MusicPlayerProps) => {
           />
         </div>
 
-        {/* Duration */}
         <span
           className="text-sm md:text-base font-medium tabular-nums flex-shrink-0 opacity-30"
           style={{ color: "#5a5360" }}
@@ -192,10 +200,10 @@ const MusicPlayer = ({ src, isMuted, volume }: MusicPlayerProps) => {
         </span>
       </div>
 
-      {/* Controls */}
+      {/* Controls — SkipBack/SkipForward now switch songs */}
       <div className="flex items-center justify-center gap-4 md:gap-5 flex-shrink-0 mt-2 md:mt-0">
         <button
-          onClick={rewind}
+          onClick={prevTrack}
           className="transition-transform duration-200 hover:scale-110 active:scale-95"
           style={{ color: "#5a5360" }}
         >
@@ -213,7 +221,7 @@ const MusicPlayer = ({ src, isMuted, volume }: MusicPlayerProps) => {
           )}
         </button>
         <button
-          onClick={forward}
+          onClick={nextTrack}
           className="transition-transform duration-200 hover:scale-110 active:scale-95"
           style={{ color: "#5a5360" }}
         >
