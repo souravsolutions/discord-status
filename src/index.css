@@ -1,13 +1,17 @@
+/* ── Fonts ─────────────────────────────────────────────────────────────── */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap');
 @import "tailwindcss";
 
+
+/* ── Reset ──────────────────────────────────────────────────────────────── */
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
+/* ── Image protection ───────────────────────────────────────────────────── */
 img {
   -webkit-user-drag: none;
   -webkit-user-select: none;
@@ -15,6 +19,7 @@ img {
   pointer-events: auto;
 }
 
+/* ── Base body ──────────────────────────────────────────────────────────── */
 body {
   font-family: 'Inter', sans-serif;
   background: #080808;
@@ -22,7 +27,7 @@ body {
   overflow-x: hidden;
 }
 
-/* Smooth hover glow for icons */
+/* ── Social icon glow ───────────────────────────────────────────────────── */
 .social-icon {
   transition: transform 0.4s ease, filter 0.4s ease;
   filter: drop-shadow(0 0 4px var(--glow-color, rgba(255,255,255,0.4))) drop-shadow(0 0 10px var(--glow-color, rgba(255,255,255,0.2)));
@@ -33,7 +38,7 @@ body {
 }
 
 
-/* Custom scrollbar */
+/* ── Scrollbar ──────────────────────────────────────────────────────────── */
 ::-webkit-scrollbar {
   width: 4px;
 }
@@ -45,7 +50,7 @@ body {
   border-radius: 2px;
 }
 
-/* Glow animations */
+/* ── Keyframe animations ────────────────────────────────────────────────── */
 @keyframes pulseGlow {
   0%, 100% { opacity: 0.4; transform: scale(1); }
   50% { opacity: 0.7; transform: scale(1.05); }
@@ -106,4 +111,97 @@ input[type="range"]::-moz-range-thumb {
   background: white;
   border: none;
   box-shadow: 0 0 6px rgba(255,255,255,0.6);
+}
+
+/* ============================================================
+   Banner Card + PFP Layout
+   ============================================================ */
+
+/* Outer hover group — contains both card + pfp */
+.banner-card-group {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-bottom: 52px;
+  cursor: default;
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
+              filter 0.35s ease;
+  will-change: transform;
+}
+
+/* hover effect removed */
+
+/* The GIF card itself */
+.banner-card {
+  position: relative;
+  width: clamp(300px, 80vw, 480px);
+  height: clamp(100px, 18vw, 155px);
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow:
+    0 2px 12px rgba(0, 0, 0, 0.55),
+    0 0 0 1px rgba(255, 255, 255, 0.07);
+  animation: cardFloat 5s ease-in-out infinite;
+  flex-shrink: 0;
+}
+
+/* Subtle dark vignette overlay on the card so the pfp pops */
+.banner-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    transparent 40%,
+    rgba(7, 7, 7, 0.55) 100%
+  );
+  pointer-events: none;
+}
+
+/* Circular PFP — sits at bottom center overlapping the card */
+.pfp-wrapper {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: clamp(88px, 20vw, 108px);
+  height: clamp(88px, 20vw, 108px);
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 3px rgba(255, 255, 255, 0.9),
+    0 0 18px 4px rgba(255, 255, 255, 0.25),
+    0 6px 24px rgba(0, 0, 0, 0.6);
+  overflow: hidden;
+  background: #111;
+}
+
+.pfp-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* Gentle floating animation for the banner card */
+@keyframes cardFloat {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-5px); }
+}
+
+/* Mobile tweaks */
+@media (max-width: 480px) {
+  .banner-card {
+    width: 90vw;
+    height: clamp(95px, 28vw, 140px);
+    border-radius: 14px;
+  }
+  .banner-card-group {
+    padding-bottom: 44px;
+  }
+  .pfp-wrapper {
+    width: 84px;
+    height: 84px;
+  }
 }
